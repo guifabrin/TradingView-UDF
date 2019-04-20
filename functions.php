@@ -125,7 +125,7 @@ function api_currencies(){
 }
 
 function convert(&$array){
-    $json = json_decode(file_get_contents("http://localhost/goldofir/tradingview/api/currencies"));
+    $json = json_decode(file_get_contents("https://otc.goldofir.me/tradingview/api/currencies"));
     $symbol = explode("/",$_REQUEST['symbol_fake']);
     $currency = array_pop($symbol);
     foreach($array as $index => $value){
