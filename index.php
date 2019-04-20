@@ -13,6 +13,24 @@ if (!file_exists("vendor/autoload.php")) return api_error('[Composer] Please run
 $action = $_REQUEST["action"];
 if (!isset($action)) api_error("[Action] Not Implemented");
 try{
+	if (isset($_REQUEST['symbol'])){
+		$_REQUEST['symbol_fake'] = $_REQUEST['symbol'];
+		if  (strpos($_REQUEST['symbol'], 'OTC:BTC/') !== false){
+			$_REQUEST['symbol'] = 'BINANCE:BNB/BTC';
+		}
+		if  (strpos($_REQUEST['symbol'], 'OTC:ETH/') !== false){
+			$_REQUEST['symbol'] = 'BINANCE:BNB/ETH';
+		}
+		if  (strpos($_REQUEST['symbol'], 'OTC:LCT/') !== false){
+			$_REQUEST['symbol'] = 'BINANCE:BNB/LCT';
+		}
+		if  (strpos($_REQUEST['symbol'], 'OTC:XRP/') !== false){
+			$_REQUEST['symbol'] = 'BINANCE:BNB/XRP';
+		}
+		if  (strpos($_REQUEST['symbol'], 'OTC:USDT/') !== false){
+			$_REQUEST['symbol'] = 'BINANCE:BNB/USDT';
+		}
+	}
     $action = "api_".$action;
     $action();
 } catch (\ccxt\NetworkError $exception) {

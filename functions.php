@@ -38,9 +38,9 @@ function api_symbols(){
         "timeout" => 30000,
     ]);
     $result = $exchange->fetch_ticker ($symbol);
-    $array["name"] = $array["symbol"];
-    $array["ticker"] = $array["symbol"];
-    $array["description"] = $array["symbol"];
+    $array["name"] = $_REQUEST['symbol_fake'];
+    $array["ticker"] = $_REQUEST['symbol_fake'];
+    $array["description"] = $_REQUEST['symbol_fake'];
     $array["type"] = "crypto";
     $array["session"] = "24x7";
     $array["exchange"] = $exchangeName;
@@ -109,8 +109,28 @@ function api_history(){
     $markets = $exchange->load_markets();
     $ohlcv = $exchange->fetchOHLCV(api_get_symbol_name($array["symbol"]), $resolution, $array["from"], 10);
     $array = $exchange->convert_ohlcv_to_trading_view($ohlcv);
+    convert($array['o']);
+    convert($array['h']);
+    convert($array['l']);
+    convert($array['c']);
     $array["s"] = "ok";
     return api_json($array);
+}
+
+function api_currencies(){
+    if (!file_exists("currencies.json") || time()-filemtime("currencies.json") > 2 * 3600) {
+        file_put_contents("currencies.json", file_get_contents("http://data.fixer.io/api/latest?access_key=831857521d531f09a12f69dff438c3a9"));
+    }
+    echo file_get_contents("currencies.json");
+}
+
+function convert(&$array){
+    $json = json_decode(file_get_contents("http://localhost/goldofir/tradingview/api/currencies"));
+    $symbol = explode("/",$_REQUEST['symbol_fake']);
+    $currency = array_pop($symbol);
+    foreach($array as $index => $value){
+        $array[$index] = 24.26 * ((1 / $json->rates->USD) * $json->rates->{$currency}) * $value;
+    }
 }
 
 function api_quotes(){
